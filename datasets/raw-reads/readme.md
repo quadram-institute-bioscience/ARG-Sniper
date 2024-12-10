@@ -4,7 +4,8 @@
 The two public datasets were used to create a mock community.
   - **Dataset 1: HumGut**
     - **Description**: Human Gut Genome Collection[^1]
-    - **GitHub**: [https://github.com/larssnip/HumGut](https://github.com/larssnip/HumGut)
+    - **Genomes**: [https://github.com/larssnip/HumGut?tab=readme-ov-file#fasta-files](https://github.com/larssnip/HumGut?tab=readme-ov-file#fasta-files)
+    - **Metadata**: [https://github.com/larssnip/HumGut?tab=readme-ov-file#metadata-tables](https://github.com/larssnip/HumGut?tab=readme-ov-file#metadata-tables)
   - **Dataset 2: Hight resistance bacterial genomes**
     - **Description**: Collection of bacterial genomes with high resistance[^2]
     - **GitHub**:[https://github.com/ewissel/hAMRoaster](https://github.com/ewissel/hAMRoaster)
