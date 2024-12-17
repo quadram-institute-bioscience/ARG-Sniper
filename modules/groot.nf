@@ -5,15 +5,17 @@ nextflow.enable.dsl=2
 
 // Align a genome with groot
 process groot_align {
-    conda '${params.work_dir}/ARG-snipper/envs/groot.yaml'
+    container "${params.container__groot}"
+    publishDir params.results_dir
 
     input:
-    path genome_fasta
+    path fastq_file
 
     output:
-    path "a.report"
+    path "groot-graphs-*", emit: results
 
-    script:
-    'groot align -i ${params.indexed_groot_database}  -f ${genome_fasta} -p 8 | groot report -c 0.95'
-
+    shell:
+    '''
+    groot align -i !{params.indexed_groot_database}  -f !{fastq_file} -p !{params.NCPUS} | groot report -c 0.95
+    '''
 }

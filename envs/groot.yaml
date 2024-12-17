@@ -1,7 +1,0 @@
-name: groot
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - python=3.13.1
-  - groot=1.1.2
