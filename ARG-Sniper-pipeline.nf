@@ -7,6 +7,7 @@ nextflow.enable.dsl=2
 
 // Import modules
 include { groot_align } from './modules/groot'
+include { ariba_run } from './modules/ariba'
 
 
 // Function which prints help message text
@@ -29,6 +30,9 @@ Required Arguments:
 
 }
 
+params.all = true
+params.groot = false
+[params.ariba = false]
 params.help = false
 
 // Main workflow
@@ -65,11 +69,21 @@ workflow {
 
     }
 
-    groot_align(
-        fastq_ch
-    )
+    if(params.all || params.groot){
+        groot_align(
+            fastq_ch
+        )
     // output:
-    //     path(groot_graph)
+    //     path(groot_report_<sample_name>.tsv)
+    //     path(groot_<sample_name>.tsv)
+    }
 
+    if(params.all || params.ariba){
+        ariba_run(
+            fastq_ch
+        )
+    // output:
+    //     path(ariba_report)
+    }
 
 }
