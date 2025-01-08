@@ -5,9 +5,6 @@ nextflow.enable.dsl=2
 
 // Align a genome with groot
 process groot_align {
-    cpus "${params.NCPUS}"
-    memory "${params.MEM}"
-    executor "slurm"
     container "${params.container__groot}"
     publishDir "${params.results_dir}/groot", mode: 'copy'
 
