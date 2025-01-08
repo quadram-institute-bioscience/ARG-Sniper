@@ -8,7 +8,7 @@ nextflow.enable.dsl=2
 // Import modules
 include { groot_align } from './modules/groot'
 include { ariba_run } from './modules/ariba'
-
+include { ariba_summary } from './modules/ariba'
 
 // Function which prints help message text
 def helpMessage() {
@@ -32,7 +32,7 @@ Required Arguments:
 
 params.all = true
 params.groot = false
-[params.ariba = false]
+params.ariba = false
 params.help = false
 
 // Main workflow
@@ -79,9 +79,15 @@ workflow {
     }
 
     if(params.all || params.ariba){
-        ariba_run(
+        ariba_report = ariba_run(
             fastq_ch
         )
+
+	ariba_grouped_reports = ariba_report
+	   .collect()
+
+	ariba_summary(ariba_grouped_reports)
+
     // output:
     //     path(ariba_report)
     }
