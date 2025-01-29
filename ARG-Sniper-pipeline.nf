@@ -10,6 +10,7 @@ include { groot_align } from './modules/groot'
 include { ariba_run } from './modules/ariba'
 include { ariba_summary } from './modules/ariba'
 include { srst2 } from './modules/srst2'
+include { karga } from './modules/karga'
 
 // Function which prints help message text
 def helpMessage() {
@@ -35,6 +36,7 @@ params.all = true
 params.groot = false
 params.ariba = false
 params.srst2 = false
+params.karga = false
 params.help = false
 
 // Main workflow
@@ -100,5 +102,15 @@ workflow {
         )
     // output:
     //     path(srst2_report_<sample_name>.tsv)
+    }    
+
+    if(params.all || params.karga){
+        karga(
+            fastq_ch
+        )
+    // output:
+    //     path(_KARGA_mappedGenes.csv )
     }
+
+
 }
