@@ -5,7 +5,7 @@ A Nextflow pipeline for antibiotic resistance gene detection from paired-end seq
 ## Introduction
 
 ARG-Sniper is a Nextflow DSL-2 pipeline designed for metagenomic analysis that processes paired-end FASTQ files to detect antibiotic resistance genes using multiple bioinformatics tools. The pipeline runs five different analysis tools in parallel: GROOT, ARIBA, KMA (adopted from ARGprofiler), KARGA, and SRST2, each requiring their respective databases.
-Users can selectively skip any of the five tools using command-line flags (--skip_groot, --skip_ariba, etc.), allowing for customized analysis workflows. The pipeline takes FASTQ files matching the pattern *_R{1,2}.fastq.gz and processes them through the selected tools.
+Users can selectively skip any of the five tools using command-line flags (--skip_groot, --skip_ariba, etc.), allowing for customized analysis workflows. The pipeline takes FASTQ and processes them through the selected tools.
 After individual tool execution, the pipeline collects all results and generates a summary report that consolidates findings from each analysis. The workflow outputs separate directories for each tool's results along with a final summary directory containing the integrated analysis.
 
 Note: This pipeline focuses on detecting antibiotic resistance genes and does not report SNP-based resistance mechanisms.
@@ -70,3 +70,57 @@ Optional Arguments:
         --skip_karga      Skip running KARGA
         --skip_srst2      Skip running SRST2
 ```
+## Expected Output
+
+Upon successful execution with all tools, ARG-Sniper generates the following directory structure with results for each sample:
+
+```
+results/
+├── argprofiler_results/
+│   └── ARGprofiler_report_{sample}.txt
+├── ariba_results/
+│   ├── ariba_report_{sample}.tsv
+│   └── ariba_summary_{sample}.csv
+├── groot_results/
+│   └── groot_report_{sample}.tsv
+├── karga_results/
+│   └── karga_report_{sample}.csv
+├── srst2_results/
+│   └── srst2_report_{sample}_fullgenes_sequence_results.txt
+└── summary/
+    └── summary_{sample}.tsv
+```
+
+**Example output for multiple samples:**
+```
+results/
+├── argprofiler_results/
+│   ├── ARGprofiler_report_dataset-100x-depth.txt
+│   ├── ARGprofiler_report_dataset-90x-depth.txt
+│   └── ARGprofiler_report_dataset-95x-depth.txt
+├── ariba_results/
+│   ├── ariba_report_dataset-100x-depth.tsv
+│   ├── ariba_report_dataset-90x-depth.tsv
+│   ├── ariba_report_dataset-95x-depth.tsv
+│   ├── ariba_summary_dataset-100x-depth.csv
+│   ├── ariba_summary_dataset-90x-depth.csv
+│   └── ariba_summary_dataset-95x-depth.csv
+├── groot_results/
+│   ├── groot_report_dataset-100x-depth.tsv
+│   ├── groot_report_dataset-90x-depth.tsv
+│   └── groot_report_dataset-95x-depth.tsv
+├── karga_results/
+│   ├── karga_report_dataset-100x-depth.csv
+│   ├── karga_report_dataset-90x-depth.csv
+│   └── karga_report_dataset-95x-depth.csv
+├── srst2_results/
+│   ├── srst2_report_dataset-100x-depth_fullgenes_sequence_results.txt
+│   ├── srst2_report_dataset-90x-depth_fullgenes_sequence_results.txt
+│   └── srst2_report_dataset-95x-depth_fullgenes_sequence_results.txt
+└── summary/
+    ├── summary_dataset-100x-depth.tsv
+    ├── summary_dataset-90x-depth.tsv
+    └── summary_dataset-95x-depth.tsv
+```
+
+The `summary/` directory contains consolidated results from all tools for each sample.
