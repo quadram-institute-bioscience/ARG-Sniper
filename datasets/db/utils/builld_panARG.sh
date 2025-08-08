@@ -1,11 +1,10 @@
 #!/bin/bash
 
-##Replace the paths as needed.
 ariba="singularity exec /qib/research-groups/CoreBioInfo/projects/arg-snipper/singulariy-images/ariba_2.14.6--py39heaaa4ec_6.img ariba"
-db="/qib/research-groups/CoreBioInfo/projects/arg-snipper/databases" 
-scripts="/qib/research-groups/CoreBioInfo/projects/arg-snipper/databases/scripts"
+db="/qib/research-groups/CoreBioInfo/projects/arg-snipper/databases"
+Heatmap="/qib/research-groups/CoreBioInfo/projects/arg-snipper/databases/scripts/gene_overlap_heatmap_plot.py"
 GeneAssimilatoR="singularity exec /qib/research-groups/CoreBioInfo/projects/arg-snipper/singulariy-images/gene_assimilator.img GeneAssimilatoR.R"
-
+scripts="/qib/research-groups/CoreBioInfo/projects/arg-snipper/databases/scripts"
 # Define the directory path
 database_dir="panARG/sequences"
 
@@ -40,7 +39,7 @@ echo "Done!!!"
 
 echo "Preparing RESFINDER_FG_2.0 database"
 $ariba prepareref -f $db/resfinder_fg/ResFinder-FG_2.0.fasta --all_coding yes --no_cdhit --force $db/resfinder_fg/prepare
-cp $db/resfinder_fg/prepare/02.cdhit.all.fa $db/$database_dir/ResFinder-FG_cds.fna
+cp $db/resfinder_fg/prepare/02.cdhit.all.fa $db/$database_dir/RFFG_cds.fna
 echo "Done!!!"
 
 echo "Preparing RESFINDER database"
@@ -49,7 +48,8 @@ cp $db/resfinder_db/prepare/02.cdhit.all.fa $db/$database_dir/ResFinder_cds.fna
 echo "Done!!!"
 
 echo "Preparing AMRFinderPlus database"
-$ariba prepareref -f $db/AMRfinderPlus_db/AMR_CDS --all_coding yes --no_cdhit --force $db/AMRfinderPlus_db/prepare
+python3 $scripts/filterGenes_AMRfinderPlus.py $db/AMRfinderPlus_db/ReferenceGeneCatalog.txt $db/AMRfinderPlus_db/AMR_CDS --output_txt $db/AMRfinderPlus_db/ReferenceGeneCatalog_filtered.txt --output_fasta $db/AMRfinderPlus_db/AMR_CDS_filtered.fasta 
+$ariba prepareref -f $db/AMRfinderPlus_db/AMR_CDS_filtered.fasta --all_coding yes --no_cdhit --force $db/AMRfinderPlus_db/prepare
 cp $db/AMRfinderPlus_db/prepare/02.cdhit.all.fa $db/$database_dir/AMRfinderPlus_cds.fna
 echo "Done!!!"
 
@@ -64,5 +64,15 @@ $GeneAssimilatoR -d $db/$database_dir -o $db/panARG -p panARG
 echo "Database: $db/panARG Done !!!"
 
 # Plot overlapping genes across databases
-python3 $scripts/gene_overlap_heatmap_plot.py -i $db/panARG/overview/panARG_master_gene_tbl.tsv -o $db/panARG/overview/plots
+echo "Preparing panARG summary plot"
+python3 $Heatmap -i $db/panARG/overview/panARG_master_gene_tbl.tsv -o $db/panARG/overview/plots
 echo "Heatmap: $db/panARG/overview/plots"
+
+# Create a metadata file for the AMR Genes
+echo "Preparing panARG annotations"
+python3 $scripts/get_args.py $db/panARG/overview/panARG_master_gene_tbl.tsv \
+    --amrfinderplus $db/AMRfinderPlus_db/ReferenceGeneCatalog_filtered.txt \
+    --card $db/card_db/aro_index.tsv \
+    --megares $db/megares_db/megares_annotations_v3.00.csv \
+    --resfinder $db/resfinder_db/notes.txt \
+    --summary $db/panARG/overview/panARG_annotations.tsv
