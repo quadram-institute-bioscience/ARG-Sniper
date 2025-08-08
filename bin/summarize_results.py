@@ -149,14 +149,13 @@ def summary_report(groot_results, ariba_results, ariba_summary, karga_results, s
 
     if metadata:
         metadata_df = pd.read_csv(metadata, sep="\t")  # Assuming metadata is a TSV file
+        metadata_df.drop(columns=['entry_count','shortname','database','entry_count','id'], inplace=True)
         if 'userGeneName' in metadata_df.columns:
             metadata_df.rename(columns={'userGeneName': 'Gene'}, inplace=True)
             merged_df = pd.merge(merged_df, metadata_df, on="Gene", how="inner")
             merged_df.fillna(0, inplace=True)
             print(f"Summary: Finalized report {output_file}")
             merged_df.to_csv(output_file, sep="\t", index=False)
-            # Drop column "entry_count"
-            merged_df.drop(columns=['entry_count'], inplace=True)
         else:
             print("Warning: 'userGeneName' column not found in metadata file.")
     else:
