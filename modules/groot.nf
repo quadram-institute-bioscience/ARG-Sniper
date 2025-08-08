@@ -6,18 +6,17 @@ nextflow.enable.dsl=2
 // Align a genome with groot
 process groot_align {
     container "${params.container__groot}"
-    publishDir "${params.results_dir}/groot", mode: 'copy'
+    publishDir params.OUTPUT, mode: 'copy'
 
     input:
     tuple val(sample_name), path(R1_fastq), path(R2_fastq)
 
     output:
-    path "groot_report_${sample_name}.tsv"
-    path "groot_${sample_name}.log"
+    tuple val(sample_name), path("groot_report_${sample_name}.tsv"), emit: groot_report
 
     shell:
     '''
-    groot align -i !{params.indexed_groot_database}  -f !{R1_fastq},!{R2_fastq} -p !{params.NCPUS} | groot report -c 0.95 > groot_report_!{sample_name}.tsv
+    groot align -i !{params.grootdb}  -f !{R1_fastq},!{R2_fastq} -p !{params.NCPUS} | groot report -c !{params.groot_cov} > groot_report_!{sample_name}.tsv
     mv groot.log groot_!{sample_name}.log
     '''
 }
