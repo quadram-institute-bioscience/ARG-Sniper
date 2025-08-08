@@ -4,7 +4,7 @@ A Nextflow pipeline for antibiotic resistance gene detection from paired-end seq
 
 ## Introduction
 
-ARG-Sniper is a Nextflow DSL-2 pipeline designed for metagenomic analysis that processes paired-end FASTQ files to detect antibiotic resistance genes using multiple bioinformatics tools. The pipeline runs five different analysis tools in parallel: GROOT, ARIBA, KMA (via ARGprofiler), KARGA, and SRST2, each requiring their respective databases.
+ARG-Sniper is a Nextflow DSL-2 pipeline designed for metagenomic analysis that processes paired-end FASTQ files to detect antibiotic resistance genes using multiple bioinformatics tools. The pipeline runs five different analysis tools in parallel: GROOT, ARIBA, KMA (adopted from ARGprofiler), KARGA, and SRST2, each requiring their respective databases.
 Users can selectively skip any of the five tools using command-line flags (--skip_groot, --skip_ariba, etc.), allowing for customized analysis workflows. The pipeline takes FASTQ files matching the pattern *_R{1,2}.fastq.gz and processes them through the selected tools.
 After individual tool execution, the pipeline collects all results and generates a summary report that consolidates findings from each analysis. The workflow outputs separate directories for each tool's results along with a final summary directory containing the integrated analysis.
 
